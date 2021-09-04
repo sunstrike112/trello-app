@@ -7,10 +7,10 @@ function Card(props) {
   const { card } = props;
 
   return (
-    <li className="card-item">
-      {card.cover && <img className="card-cover" src={card.cover} />}
+    <div className="card-item">
+      {card.cover && <img className="card-cover" src={card.cover} draggable="false" />}
       {card.title}
-    </li>
+    </div>
   );
 }
 
