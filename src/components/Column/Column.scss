@@ -1,4 +1,4 @@
-@import '_setting.scss';
+@import "_setting.scss";
 
 $column-header-height: 46px;
 $column-footer-height: 46px;
@@ -37,12 +37,10 @@ $list-bg-color: #ebecf0;
     border-bottom-right-radius: $column-border-radius;
   }
 
-  ul.task-list {
+  ul.card-list {
     list-style-type: none;
     margin: 0;
-    max-height: calc(
-      100% - #{$column-header-height} - #{$column-footer-height}
-    );
+    max-height: calc(100% - #{$column-header-height} - #{$column-footer-height});
     overflow-y: auto;
     &::-webkit-scrollbar {
       -webkit-appearance: none;
