@@ -1,13 +1,13 @@
-import React from "react";
+import React from 'react'
 
-import "./AppBar.scss";
+import './AppBar.scss'
 
 function AppBar(props) {
   return (
     <>
       <nav className="navbar-app">App bar</nav>
     </>
-  );
+  )
 }
 
-export default AppBar;
+export default AppBar
