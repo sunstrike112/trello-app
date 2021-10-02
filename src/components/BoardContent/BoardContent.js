@@ -3,9 +3,9 @@ import { isEmpty } from 'lodash'
 import { Container, Draggable } from 'react-smooth-dnd'
 import { Container as BootstrapContainer, Row, Col, Form, Button } from 'react-bootstrap'
 
-import { initialData } from 'actions/initialData'
 import { mapOrder } from 'utilities/sorts'
 import { applyDrag } from 'utilities/dragDrop'
+import { fetchBoarchDetails } from 'actions/ApiCall'
 
 import Column from 'components/Column/Column'
 import './BoardContent.scss'
@@ -23,11 +23,11 @@ function BoardContent(props) {
   const onNewColumnTitleChange = (e) => setNewColunmTile(e.target.value)
 
   useEffect(() => {
-    const boardFromDB = initialData.boards.find((board) => board.id === 'board-1')
-    if (boardFromDB) {
-      setBoard(boardFromDB)
-      setColumns(mapOrder(boardFromDB.columns, boardFromDB.columnOrder, 'id'))
-    }
+    const boardId = '61578055ce183abd7c7e2dd1'
+    fetchBoarchDetails(boardId).then(board => {
+      setBoard(board)
+      setColumns(mapOrder(board.columns, board.columnOrder, '_id'))
+    })
   }, [])
 
   useEffect(() => {
@@ -50,7 +50,7 @@ function BoardContent(props) {
     newColumns = applyDrag(newColumns, dropResult)
 
     let newBoard = { ...board }
-    newBoard.columnOrder = newColumns.map((column) => column.id)
+    newBoard.columnOrder = newColumns.map((column) => column._id)
     newBoard.columns = newColumns
     setColumns(newColumns)
     setBoard(newBoard)
@@ -59,9 +59,9 @@ function BoardContent(props) {
   const onCardDrop = (columnId, dropResult) => {
     if (dropResult.removedIndex !== null || dropResult.addedIndex !== null) {
       let newColumns = [...columns]
-      let currentColumn = newColumns.find((column) => column.id === columnId)
+      let currentColumn = newColumns.find((column) => column._id === columnId)
       currentColumn.cards = applyDrag(currentColumn.cards, dropResult)
-      currentColumn.cardOrder = currentColumn.cards.map((card) => card.id)
+      currentColumn.cardOrder = currentColumn.cards.map((card) => card._id)
       setColumns(newColumns)
     }
   }
@@ -73,7 +73,7 @@ function BoardContent(props) {
     }
     const newColumnToAdd = {
       id: Math.random().toString(36).substr(2, 5),
-      boardId: board.id,
+      boardId: board._id,
       title: newColumnTitle.trim(),
       cardOrder: [],
       cards: [],
@@ -82,7 +82,7 @@ function BoardContent(props) {
     newColumns.push(newColumnToAdd)
 
     let newBoard = { ...board }
-    newBoard.columnOrder = newColumns.map((column) => column.id)
+    newBoard.columnOrder = newColumns.map((column) => column._id)
     newBoard.columns = newColumns
     setColumns(newColumns)
     setBoard(newBoard)
@@ -91,10 +91,10 @@ function BoardContent(props) {
   }
 
   const onUpdateColumn = (newColummToUpdate) => {
-    const columnIdToUpdate = newColummToUpdate.id
+    const columnIdToUpdate = newColummToUpdate._id
     let newColumns = [...columns]
     const columnIndexToUpdate = newColumns.findIndex(
-      (column) => column.id === columnIdToUpdate
+      (column) => column._id === columnIdToUpdate
     )
 
     if (newColummToUpdate._destroy) {
@@ -104,7 +104,7 @@ function BoardContent(props) {
     }
 
     let newBoard = { ...board }
-    newBoard.columnOrder = newColumns.map((column) => column.id)
+    newBoard.columnOrder = newColumns.map((column) => column._id)
     newBoard.columns = newColumns
     setColumns(newColumns)
     setBoard(newBoard)
