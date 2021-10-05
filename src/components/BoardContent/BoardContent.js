@@ -5,7 +5,7 @@ import { Container as BootstrapContainer, Row, Col, Form, Button } from 'react-b
 
 import { mapOrder } from 'utilities/sorts'
 import { applyDrag } from 'utilities/dragDrop'
-import { fetchBoarchDetails } from 'actions/ApiCall'
+import { fetchBoarchDetails, createNewColumn } from 'actions/ApiCall'
 
 import Column from 'components/Column/Column'
 import './BoardContent.scss'
@@ -71,26 +71,28 @@ function BoardContent(props) {
       newColumInputRef.current.focus()
       return
     }
+
     const newColumnToAdd = {
-      id: Math.random().toString(36).substr(2, 5),
       boardId: board._id,
       title: newColumnTitle.trim(),
-      cardOrder: [],
-      cards: [],
     }
-    let newColumns = [...columns]
-    newColumns.push(newColumnToAdd)
 
-    let newBoard = { ...board }
-    newBoard.columnOrder = newColumns.map((column) => column._id)
-    newBoard.columns = newColumns
-    setColumns(newColumns)
-    setBoard(newBoard)
-    setNewColunmTile('')
-    toggleOpenNewColumnForm()
+    //Call API create newColumn
+    createNewColumn(newColumnToAdd).then(column => {
+      let newColumns = [...columns]
+      newColumns.push(column)
+
+      let newBoard = { ...board }
+      newBoard.columnOrder = newColumns.map((column) => column._id)
+      newBoard.columns = newColumns
+      setColumns(newColumns)
+      setBoard(newBoard)
+      setNewColunmTile('')
+      toggleOpenNewColumnForm()
+    })
   }
 
-  const onUpdateColumn = (newColummToUpdate) => {
+  const onUpdateColumState = (newColummToUpdate) => {
     const columnIdToUpdate = newColummToUpdate._id
     let newColumns = [...columns]
     const columnIndexToUpdate = newColumns.findIndex(
@@ -129,7 +131,7 @@ function BoardContent(props) {
               key={index}
               column={column}
               onCardDrop={onCardDrop}
-              onUpdateColumn={onUpdateColumn}
+              onUpdateColumState={onUpdateColumState}
             />
           </Draggable>
         ))}
